@@ -53,6 +53,7 @@ uint8_t rxData[8];
 uint8_t canIdBuffer[4];
 uint32_t receivedCanId;
 
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -135,6 +136,7 @@ int main(void)
               while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET);
           }
       }*/
+
   }
   /* USER CODE END 3 */
   }
@@ -329,18 +331,23 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
                 HAL_Delay(200);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+
+
                 break;
 
             case 0x1910140: // Max/Min cell voltages
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-                HAL_Delay(200);
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+               HAL_Delay(200);
+               HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+
                 break;
 
             case 0x1920140: // Status charge/discharge
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
                 HAL_Delay(200);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+
+
                 break;
 
             default:
@@ -362,8 +369,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         if (HAL_CAN_AddTxMessage(&hcan1, &txHeader, txData, &txMailbox) != HAL_OK)
         {
             // Error handling led red
-        	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        	 HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
         	  HAL_Delay(500);
+
+
         }
 
         // Restart UART interrupt for next ID
@@ -377,7 +386,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData);
 
-    char uartMsg[150];  // larger buffer to be safe
+    char uartMsg[150];
+
 
     if (rxHeader.IDE == CAN_ID_EXT)
     {
@@ -392,6 +402,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
                 HAL_Delay(100);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
 
+
                 uint16_t cumVolt   = (rxData[0] << 8) | rxData[1];    // 0.1V
                 uint16_t packVolt  = (rxData[2] << 8) | rxData[3];    // 0.1V
                 int16_t  current   = (rxData[4] << 8) | rxData[5];    // Offset 30000 → 0.1A
@@ -402,6 +413,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
                 snprintf(uartMsg, sizeof(uartMsg),
                     "\r\n[ID 0x1904001] SOC=%.1f%%  CumVolt=%.1fV  PackVolt=%.1fV  Current=%.1fA\r\n",
                     SOC/10.0, cumVolt/10.0, packVolt/10.0, current/10.0);
+
+
 
                 HAL_UART_Transmit(&huart2, (uint8_t*)uartMsg, strlen(uartMsg), 500);
                 break;
@@ -415,6 +428,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
                 HAL_Delay(100);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+
+
 
                 uint16_t maxV = (rxData[0] << 8) | rxData[1];
                 uint8_t  maxCell = rxData[2];
@@ -437,6 +452,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
                 HAL_Delay(100);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+
+
 
 
                 uint8_t maxTemp = rxData[0] - 40;

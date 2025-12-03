@@ -39,15 +39,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  00021565  00000000  00000000  00016899  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0000a97c  00000000  00000000  00037dfe  2**0
+ 18 .debug_line   0000a984  00000000  00000000  00037dfe  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000c7401  00000000  00000000  0004277a  2**0
+ 19 .debug_str    000c7401  00000000  00000000  00042782  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  00109b7b  2**0
+ 20 .comment      00000043  00000000  00000000  00109b83  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  000035d8  00000000  00000000  00109bc0  2**2
+ 21 .debug_frame  000035d8  00000000  00000000  00109bc8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 00000076  00000000  00000000  0010d198  2**0
+ 22 .debug_line_str 00000076  00000000  00000000  0010d1a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1825,8 +1825,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  8001238:	4a36      	ldr	r2, [pc, #216]	@ (8001314 <HAL_UART_RxCpltCallback+0x130>)
  800123a:	4293      	cmp	r3, r2
  800123c:	d010      	beq.n	8001260 <HAL_UART_RxCpltCallback+0x7c>
-                HAL_Delay(200);
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+
+
                 break;
 
             default:
@@ -1847,15 +1847,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  800125a:	f001 fe37 	bl	8002ecc <HAL_GPIO_WritePin>
                 break;
  800125e:	e020      	b.n	80012a2 <HAL_UART_RxCpltCallback+0xbe>
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+               HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
  8001260:	2201      	movs	r2, #1
  8001262:	f44f 5100 	mov.w	r1, #8192	@ 0x2000
  8001266:	482c      	ldr	r0, [pc, #176]	@ (8001318 <HAL_UART_RxCpltCallback+0x134>)
  8001268:	f001 fe30 	bl	8002ecc <HAL_GPIO_WritePin>
-                HAL_Delay(200);
+               HAL_Delay(200);
  800126c:	20c8      	movs	r0, #200	@ 0xc8
  800126e:	f000 fc63 	bl	8001b38 <HAL_Delay>
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
  8001272:	2200      	movs	r2, #0
  8001274:	f44f 5100 	mov.w	r1, #8192	@ 0x2000
  8001278:	4827      	ldr	r0, [pc, #156]	@ (8001318 <HAL_UART_RxCpltCallback+0x134>)
@@ -1920,13 +1920,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  80012dc:	d008      	beq.n	80012f0 <HAL_UART_RxCpltCallback+0x10c>
         {
             // Error handling led red
-        	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        	 HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
  80012de:	f44f 4180 	mov.w	r1, #16384	@ 0x4000
  80012e2:	480d      	ldr	r0, [pc, #52]	@ (8001318 <HAL_UART_RxCpltCallback+0x134>)
  80012e4:	f001 fe0b 	bl	8002efe <HAL_GPIO_TogglePin>
         	  HAL_Delay(500);
  80012e8:	f44f 70fa 	mov.w	r0, #500	@ 0x1f4
  80012ec:	f000 fc24 	bl	8001b38 <HAL_Delay>
+
+
         }
 
         // Restart UART interrupt for next ID
@@ -1968,7 +1970,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
  8001334:	6878      	ldr	r0, [r7, #4]
  8001336:	f000 ff11 	bl	800215c <HAL_CAN_GetRxMessage>
 
-    char uartMsg[150];  // larger buffer to be safe
+    char uartMsg[150];
+
 
     if (rxHeader.IDE == CAN_ID_EXT)
  800133a:	4bb1      	ldr	r3, [pc, #708]	@ (8001600 <HAL_CAN_RxFifo0MsgPendingCallback+0x2dc>)
